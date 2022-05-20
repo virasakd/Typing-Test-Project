@@ -59,7 +59,7 @@ def proccess(word):
 
         
     #print(passages[index].text)
-    # break up the string.
+    # break up the string, and recombine them
     pass_text = passages[index].text.split(" ")
     final_string = ""
 

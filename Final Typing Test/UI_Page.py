@@ -14,7 +14,7 @@ Reset_text = "Reset/Save Button: This button allows you to reset your text box a
 sent_text = "Text Analysis: This button provides a sentiment analysis of the random passage generated."
 var = "Text will be generated here...."
 
-# return if the paragraph is postive, negative or neutral.
+
 
 
 
@@ -236,14 +236,19 @@ class TypingTest:
             characters_per_min =  characters_per_min * 60
             self.Timer.config(text=f"Rate of Chars: { characters_per_min:.2f}\n TIME: {self.count:.2f}")
     
-
+    # reset the time and save the results if they are valid
     def reset_text(self):
         if self.count > 10:
             self.previous_time = self.count
+
+            #update the timers and calculate characters per second
             self.previous_time = int((len(self.text_area.get("1.0",'end-1c').split(" "))/ self.previous_time ) * 60)
         print(self.previous_time)
+
+        # reset the variables
         self.count = 0.00
         self.isRunning = False
+
         self.Timer.config( text= f"Rate of Chars: {0.00},\n, TIME: {0.00}")
         self.text_area.delete("1.0",END)
     
@@ -251,8 +256,10 @@ class TypingTest:
 
     def show_res(self):
 
+        # if the user is not typing show the results
         if self.isRunning == False:
 
+            # write a request to the other service
             write_file = open("res_coms.txt", "w")
             holder = str(self.previous_time)
             write_file.write(holder)
@@ -268,23 +275,33 @@ class TypingTest:
             res_window.config(bg = "grey")
             res_window.geometry("600x600+500+100")
 
+
+            #show results through labels
             label_wpm = Label(res_window,text= "Your WPM = " + holder,font=("Times", 40), bg = "grey", fg = "#18202A")
             label_wpm.pack(pady=10)
+
             text_wpm = Label(res_window,text=result_line,font=("Times", 30),bg = "grey", fg = "#18202A")
             text_wpm.pack(pady=10)
+
             close_button = Button(res_window,text="RETURN",font=("Times", 30), bg = "#18202A", fg= "grey", command=res_window.destroy)
             close_button.pack(pady=15)
 
 
-
+# find which way the sentiment analysis is leaning.
     
 def sent_result(comp_value):
+
     final_string = ""
 
+    # if the compound score is greater than 51, then return positive text
     if comp_value > 0.51:
         final_string = "The generated paragraph is overall more positive, with a sentiment score of: "
+    
+    # if the compound score is in the middle return neutral.
     elif comp_value < 0.51 and comp_value > 0.49:
          final_string = "The generated paragraph is nuetral, with a sentiment score of: "
+
+    # else, if the score is less and 49, than return negative
     else:
         final_string = "The generated paragraph is overall more negative, with a sentiment score of: "
 
